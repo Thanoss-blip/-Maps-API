@@ -1,0 +1,56 @@
+import sys
+
+import requests
+
+from PyQt5 import uic
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
+from PyQt5.QtWidgets import QInputDialog
+
+class Example(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('API.ui', self)
+        ll, ok_pressed = QInputDialog.getText(self,
+                                                "Введите координаты через пробел", 
+                                                "ширина, долгота =")
+        if ok_pressed:
+            self.lon, self.lat = ll.split()
+        self.api_server = "http://static-maps.yandex.ru/1.x/"
+        self.delta = "0.02"
+        self.params = {
+            "ll": ",".join([self.lon, self.lat]),
+            "spn": ",".join([self.delta, self.delta]),
+            "l": "map"
+        }
+        self.response = requests.get(self.api_server, params=self.params)
+        self.initUI()
+
+    def initUI(self):
+        self.getImage()
+        self.pixmap = QPixmap(self.map_file)
+        self.image = QLabel(self)
+        self.image.move(0, 0)
+        self.image.resize(600, 450)
+        self.image.setPixmap(self.pixmap)
+
+    def getImage(self):
+        if not self.response:
+            print("Ошибка выполнения запроса:")
+            print(map_request)
+            print("Http статус:", response.status_code, "(", response.reason, ")")
+            sys.exit(1)
+
+        self.map_file = "map.png"
+        with open(self.map_file, "wb") as file:
+            file.write(self.response.content)
+
+    def closeEvent(self, event):
+        os.remove(self.map_file)
+
+# для теста использовала координаты 37.530887 55.703118
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = Example()
+    ex.show()
+    sys.exit(app.exec())
