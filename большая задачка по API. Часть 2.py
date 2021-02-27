@@ -36,7 +36,7 @@ class Example(QMainWindow):
         self.image.setPixmap(self.pixmap)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_PageUp:
+        if event.key() == Qt.Key_PageDown:
             self.delta2 = self.delta
             self.delta = str(float(self.delta) * 2)
             if float(self.delta) >= 52:
@@ -46,7 +46,7 @@ class Example(QMainWindow):
             self.getImage()
             self.newImage()
 
-        elif event.key() == Qt.Key_PageDown:
+        elif event.key() == Qt.Key_PageUp:
             self.delta2 = self.delta
             self.delta = str(float(self.delta) / 2)
             if float(self.delta) < 0.0001:
